@@ -11,11 +11,21 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
 }
 
 export async function isUserAuthenticated() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return !!session;
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    return !!session;
+  } catch (error) {
+    console.error('Error checking authentication:', error);
+    return false;
+  }
 }

@@ -18,27 +18,44 @@ import NotFound from "./pages/NotFound";
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
-      const authenticated = await isUserAuthenticated();
-      setIsAuthenticated(authenticated);
+      try {
+        const authenticated = await isUserAuthenticated();
+        setIsAuthenticated(authenticated);
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
     
     checkAuth();
   }, []);
 
-  if (isAuthenticated === null) {
+  if (isLoading) {
     // Still checking authentication
-    return <div className="min-h-screen bg-chess-darker flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-chess-darker flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div>
+      </div>
+    );
   }
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
