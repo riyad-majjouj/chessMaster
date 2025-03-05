@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "@/components/ui/container";
@@ -71,7 +70,20 @@ const Dashboard = () => {
           throw error;
         }
         
-        setUserCourses(data || []);
+        const formattedData = data?.map(item => ({
+          ...item,
+          course: item.course && Array.isArray(item.course) && item.course.length > 0 
+            ? item.course[0] 
+            : {
+                title: "",
+                description: "",
+                level: "",
+                thumbnail: "",
+                author: ""
+              }
+        })) as UserCourse[];
+        
+        setUserCourses(formattedData || []);
       } catch (error) {
         console.error("Error fetching user courses:", error);
         toast({
@@ -87,7 +99,6 @@ const Dashboard = () => {
     fetchUserCourses();
   }, [user]);
 
-  // Dummy data for initial display before database connection
   const dummyUserCourses: UserCourse[] = [
     {
       id: "1",
@@ -152,7 +163,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-chess-darker text-white relative">
-      {/* Blur background effects */}
       <div className="fixed inset-0 z-0 overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gold/5 filter blur-[100px] animate-float"></div>
         <div className="absolute top-[40%] left-[-10%] w-[500px] h-[500px] rounded-full bg-chess-blue/10 filter blur-[120px] animate-float" style={{ animationDelay: "1s" }}></div>
