@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,16 +53,11 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
-				}
+				gold: '#D4AF37',
+				"chess-blue": '#4A6D8C',
+				"chess-dark": '#121212',
+				"chess-darker": '#0A0A0A',
+				"chess-charcoal": '#1E1E1E',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -69,27 +65,49 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			keyframes: {
-				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+				"accordion-down": {
+					from: { height: "0" },
+					to: { height: "var(--radix-accordion-content-height)" },
 				},
-				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
-				}
+				"accordion-up": {
+					from: { height: "var(--radix-accordion-content-height)" },
+					to: { height: "0" },
+				},
+				float: {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				fadeIn: {
+					from: { opacity: '0', transform: 'translateY(10px)' },
+					to: { opacity: '1', transform: 'translateY(0)' },
+				},
+				fadeInLeft: {
+					from: { opacity: '0', transform: 'translateX(-20px)' },
+					to: { opacity: '1', transform: 'translateX(0)' },
+				},
+				fadeInRight: {
+					from: { opacity: '0', transform: 'translateX(20px)' },
+					to: { opacity: '1', transform: 'translateX(0)' },
+				},
+				scaleIn: {
+					from: { transform: 'scale(0.95)', opacity: '0' },
+					to: { transform: 'scale(1)', opacity: '1' },
+				},
+				pulse: {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' },
+				},
 			},
 			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				"accordion-down": "accordion-down 0.2s ease-out",
+				"accordion-up": "accordion-up 0.2s ease-out",
+				float: 'float 5s ease-in-out infinite',
+				fadeIn: 'fadeIn 0.8s ease-out forwards',
+				fadeInLeft: 'fadeInLeft 0.8s ease-out forwards',
+				fadeInRight: 'fadeInRight 0.8s ease-out forwards',
+				scaleIn: 'scaleIn 0.5s ease-out forwards',
+				pulse: 'pulse 3s ease-in-out infinite',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
