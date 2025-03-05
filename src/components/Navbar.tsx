@@ -1,14 +1,25 @@
 
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { supabase, isUserAuthenticated } from "@/lib/supabase";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isUserAuthenticated();
+      setIsAuthenticated(authenticated);
+    };
+    
+    checkAuth();
+    
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
@@ -18,6 +29,12 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setIsAuthenticated(false);
+    navigate("/");
+  };
 
   return (
     <header
@@ -30,35 +47,63 @@ const Navbar = () => {
     >
       <Container>
         <div className="flex items-center justify-between">
-          <a href="#" className="flex items-center">
+          <Link to="/" className="flex items-center">
             <span className="text-2xl font-bold text-white">
               Chess<span className="text-gold">Masters</span>
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#about"
+            <Link
+              to="/#about"
               className="text-white/80 hover:text-gold transition-colors duration-200"
             >
               About
-            </a>
-            <a
-              href="#courses"
+            </Link>
+            <Link
+              to="/courses"
               className="text-white/80 hover:text-gold transition-colors duration-200"
             >
               Courses
-            </a>
-            <a
-              href="#masters"
+            </Link>
+            <Link
+              to="/#masters"
               className="text-white/80 hover:text-gold transition-colors duration-200"
             >
               Masters
-            </a>
-            <Button className="bg-gold text-chess-dark hover:bg-gold/90">
-              Join Now
-            </Button>
+            </Link>
+            
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/dashboard"
+                  className="text-white/80 hover:text-gold transition-colors duration-200"
+                >
+                  Dashboard
+                </Link>
+                <Button 
+                  onClick={handleSignOut}
+                  variant="outline"
+                  className="border-white/20 hover:bg-white/10"
+                >
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link to="/login">
+                  <Button variant="outline" className="border-white/20 hover:bg-white/10">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-gold text-chess-dark hover:bg-gold/90">
+                    Join Now
+                  </Button>
+                </Link>
+              </div>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -96,30 +141,73 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 py-4 glass-card rounded-lg animate-fadeIn">
             <nav className="flex flex-col space-y-4 px-4">
-              <a
-                href="#about"
+              <Link
+                to="/#about"
                 className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 About
-              </a>
-              <a
-                href="#courses"
+              </Link>
+              <Link
+                to="/courses"
                 className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Courses
-              </a>
-              <a
-                href="#masters"
+              </Link>
+              <Link
+                to="/#masters"
                 className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Masters
-              </a>
-              <Button className="bg-gold text-chess-dark hover:bg-gold/90 w-full">
-                Join Now
-              </Button>
+              </Link>
+              
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Button 
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    variant="outline"
+                    className="border-white/20 hover:bg-white/10"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    to="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Button 
+                      variant="outline" 
+                      className="border-white/20 hover:bg-white/10 w-full"
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link 
+                    to="/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Button 
+                      className="bg-gold text-chess-dark hover:bg-gold/90 w-full"
+                    >
+                      Join Now
+                    </Button>
+                  </Link>
+                </>
+              )}
             </nav>
           </div>
         )}

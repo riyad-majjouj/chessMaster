@@ -34,13 +34,21 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-chess-dark text-white overflow-x-hidden">
-      <Navbar />
-      <HeroSection />
-      <AboutSection />
-      <CoursesSection />
-      <MastersSection />
-      <Footer />
+    <div className="min-h-screen bg-chess-darker text-white overflow-x-hidden relative">
+      {/* Blur background effects */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gold/5 filter blur-[100px] animate-float"></div>
+        <div className="absolute top-[40%] left-[-10%] w-[500px] h-[500px] rounded-full bg-chess-blue/10 filter blur-[120px] animate-float" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-[-10%] right-[20%] w-[400px] h-[400px] rounded-full bg-gold/5 filter blur-[80px] animate-float" style={{ animationDelay: "2s" }}></div>
+      </div>
+      <div className="relative z-10">
+        <Navbar />
+        <HeroSection />
+        <AboutSection />
+        <CoursesSection />
+        <MastersSection />
+        <Footer />
+      </div>
     </div>
   );
 };
