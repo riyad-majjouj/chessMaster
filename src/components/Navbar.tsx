@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -36,6 +37,33 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const isHomePage = location.pathname === "/";
+
+  // Helper function to create home route links
+  const createHomeLink = (anchor: string, text: string) => {
+    if (isHomePage) {
+      return (
+        <a
+          href={`#${anchor}`}
+          className="text-white/80 hover:text-gold transition-colors duration-200"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          {text}
+        </a>
+      );
+    } else {
+      return (
+        <Link
+          to={`/#${anchor}`}
+          className="text-white/80 hover:text-gold transition-colors duration-200"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          {text}
+        </Link>
+      );
+    }
+  };
+
   return (
     <header
       className={cn(
@@ -55,24 +83,14 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/#about"
-              className="text-white/80 hover:text-gold transition-colors duration-200"
-            >
-              About
-            </Link>
+            {createHomeLink("about", "About")}
             <Link
               to="/courses"
               className="text-white/80 hover:text-gold transition-colors duration-200"
             >
               Courses
             </Link>
-            <Link
-              to="/#masters"
-              className="text-white/80 hover:text-gold transition-colors duration-200"
-            >
-              Masters
-            </Link>
+            {createHomeLink("masters", "Masters")}
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
@@ -141,13 +159,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 py-4 glass-card rounded-lg animate-fadeIn">
             <nav className="flex flex-col space-y-4 px-4">
-              <Link
-                to="/#about"
-                className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                About
-              </Link>
+              {createHomeLink("about", "About")}
               <Link
                 to="/courses"
                 className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
@@ -155,13 +167,7 @@ const Navbar = () => {
               >
                 Courses
               </Link>
-              <Link
-                to="/#masters"
-                className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Masters
-              </Link>
+              {createHomeLink("masters", "Masters")}
               
               {isAuthenticated ? (
                 <>

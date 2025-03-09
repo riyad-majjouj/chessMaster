@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import ChessScene from "@/components/ChessScene";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   const revealRef = useRef<HTMLDivElement>(null);
@@ -54,12 +55,16 @@ const HeroSection = () => {
               Learn from grandmasters and transform your strategic thinking with our premium online chess courses. Elevate your game to new heights.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start reveal">
-              <Button className="bg-gold text-chess-dark hover:bg-gold/90 hover-shine">
-                Get Started
-              </Button>
-              <Button variant="outline" className="border-white/20 hover:bg-white/5">
-                Explore Courses
-              </Button>
+              <Link to="/signup">
+                <Button className="bg-gold text-chess-dark hover:bg-gold/90 hover-shine">
+                  Get Started
+                </Button>
+              </Link>
+              <Link to="/courses">
+                <Button variant="outline" className="border-white/20 hover:bg-white/5">
+                  Explore Courses
+                </Button>
+              </Link>
             </div>
             <div className="mt-8 text-white/60 text-sm flex items-center justify-center lg:justify-start gap-6 reveal">
               <div className="flex items-center">

@@ -46,27 +46,27 @@ const ChessScene = () => {
     rimLight.position.set(-1, 1, -1);
     scene.add(rimLight);
 
-    // Create a better knight chess piece
+    // Create an improved knight chess piece
     const knightGroup = new THREE.Group();
 
-    // Base
-    const baseGeometry = new THREE.CylinderGeometry(1, 1.2, 0.3, 16);
+    // Base of knight
+    const baseGeometry = new THREE.CylinderGeometry(1, 1.2, 0.3, 24);
     const baseMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      metalness: 0.8,
-      roughness: 0.2,
+      color: 0xf0f0f0,
+      metalness: 0.7,
+      roughness: 0.3,
     });
     const base = new THREE.Mesh(baseGeometry, baseMaterial);
     base.castShadow = true;
     base.receiveShadow = true;
     knightGroup.add(base);
 
-    // Middle piece
-    const middleGeometry = new THREE.CylinderGeometry(0.8, 1, 0.7, 16);
+    // Middle column
+    const middleGeometry = new THREE.CylinderGeometry(0.8, 1, 0.7, 24);
     const middleMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      metalness: 0.8,
-      roughness: 0.2,
+      color: 0xf0f0f0,
+      metalness: 0.7,
+      roughness: 0.3,
     });
     const middle = new THREE.Mesh(middleGeometry, middleMaterial);
     middle.position.y = 0.5;
@@ -74,55 +74,83 @@ const ChessScene = () => {
     middle.receiveShadow = true;
     knightGroup.add(middle);
 
-    // Knight head
-    const headGeometry = new THREE.SphereGeometry(0.7, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+    // Knight's body
+    const bodyGeometry = new THREE.CylinderGeometry(0.6, 0.8, 0.6, 24);
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf0f0f0,
+      metalness: 0.7,
+      roughness: 0.3,
+    });
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    body.position.y = 1.1;
+    body.castShadow = true;
+    body.receiveShadow = true;
+    knightGroup.add(body);
+
+    // Knight head - smoother
+    const headGeometry = new THREE.SphereGeometry(0.45, 32, 32);
     const headMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      metalness: 0.8,
-      roughness: 0.2,
+      color: 0xf0f0f0,
+      metalness: 0.7,
+      roughness: 0.3,
     });
     const head = new THREE.Mesh(headGeometry, headMaterial);
-    head.rotation.x = Math.PI;
-    head.position.y = 1.1;
+    head.position.y = 1.65;
+    head.position.z = 0.1;
+    head.scale.set(1, 1.2, 1.3);
     head.castShadow = true;
     head.receiveShadow = true;
     knightGroup.add(head);
 
-    // Knight's mane
-    const maneGeometry = new THREE.ConeGeometry(0.4, 0.8, 16);
-    const maneMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+    // Knight's neck/mane
+    const neckGeometry = new THREE.CylinderGeometry(0.3, 0.5, 0.4, 16);
+    const neckMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf0f0f0,
       metalness: 0.7,
       roughness: 0.3,
     });
-    const mane = new THREE.Mesh(maneGeometry, maneMaterial);
-    mane.position.set(0, 1.1, -0.5);
-    mane.rotation.x = Math.PI / 2.5;
-    mane.castShadow = true;
-    mane.receiveShadow = true;
-    knightGroup.add(mane);
+    const neck = new THREE.Mesh(neckGeometry, neckMaterial);
+    neck.position.set(0, 1.55, -0.2);
+    neck.rotation.x = Math.PI / 4;
+    neck.castShadow = true;
+    neck.receiveShadow = true;
+    knightGroup.add(neck);
 
-    // Knight's ears
-    const earGeometry = new THREE.ConeGeometry(0.15, 0.4, 8);
+    // Knight's ears - more refined
+    const earGeometry = new THREE.ConeGeometry(0.15, 0.3, 16);
     const earMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+      color: 0xf0f0f0,
       metalness: 0.7,
       roughness: 0.3,
     });
     
     const leftEar = new THREE.Mesh(earGeometry, earMaterial);
-    leftEar.position.set(-0.3, 1.5, 0);
+    leftEar.position.set(-0.25, 1.9, 0);
     leftEar.rotation.z = -Math.PI / 12;
     leftEar.castShadow = true;
     leftEar.receiveShadow = true;
     knightGroup.add(leftEar);
     
     const rightEar = new THREE.Mesh(earGeometry, earMaterial);
-    rightEar.position.set(0.3, 1.5, 0);
+    rightEar.position.set(0.25, 1.9, 0);
     rightEar.rotation.z = Math.PI / 12;
     rightEar.castShadow = true;
     rightEar.receiveShadow = true;
     knightGroup.add(rightEar);
+
+    // Knight's nose for more horse-like appearance
+    const noseGeometry = new THREE.CylinderGeometry(0.18, 0.25, 0.5, 16);
+    const noseMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf0f0f0,
+      metalness: 0.7,
+      roughness: 0.3,
+    });
+    const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+    nose.position.set(0, 1.6, 0.5);
+    nose.rotation.x = Math.PI / 3;
+    nose.castShadow = true;
+    nose.receiveShadow = true;
+    knightGroup.add(nose);
 
     // Add some reflections with environment map
     const cubeTextureLoader = new THREE.CubeTextureLoader();
@@ -135,18 +163,14 @@ const ChessScene = () => {
       '/assets/envmap/nz.png',
     ]);
     
-    // Apply environment map
+    // Apply environment map to all materials
     scene.environment = environmentMap;
-    baseMaterial.envMap = environmentMap;
-    baseMaterial.envMapIntensity = 0.5;
-    middleMaterial.envMap = environmentMap;
-    middleMaterial.envMapIntensity = 0.5;
-    headMaterial.envMap = environmentMap;
-    headMaterial.envMapIntensity = 0.5;
-    maneMaterial.envMap = environmentMap;
-    maneMaterial.envMapIntensity = 0.5;
-    earMaterial.envMap = environmentMap;
-    earMaterial.envMapIntensity = 0.5;
+    
+    const materials = [baseMaterial, middleMaterial, bodyMaterial, headMaterial, neckMaterial, earMaterial, noseMaterial];
+    materials.forEach(material => {
+      material.envMap = environmentMap;
+      material.envMapIntensity = 0.5;
+    });
 
     // Add the knight to the scene
     knightGroup.scale.set(0.8, 0.8, 0.8);
@@ -189,13 +213,13 @@ const ChessScene = () => {
       targetRotationX = mouseRef.current.y * 0.2;
       targetRotationZ = mouseRef.current.x * 0.1;
 
-      // Apply easing to rotation
-      knightGroup.rotation.y += (targetRotationY - knightGroup.rotation.y) * 0.05;
-      knightGroup.rotation.x += (targetRotationX - knightGroup.rotation.x) * 0.05;
-      knightGroup.rotation.z += (targetRotationZ - knightGroup.rotation.z) * 0.05;
+      // Apply easing to rotation - smoother animation
+      knightGroup.rotation.y += (targetRotationY - knightGroup.rotation.y) * 0.03;
+      knightGroup.rotation.x += (targetRotationX - knightGroup.rotation.x) * 0.03;
+      knightGroup.rotation.z += (targetRotationZ - knightGroup.rotation.z) * 0.03;
       
       // Add subtle floating animation
-      knightGroup.position.y = -1 + Math.sin(Date.now() * 0.001) * 0.05;
+      knightGroup.position.y = -1 + Math.sin(Date.now() * 0.0008) * 0.05;
 
       renderer.render(scene, camera);
     };

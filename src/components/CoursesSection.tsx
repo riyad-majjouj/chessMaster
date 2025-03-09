@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const courses = [
   {
@@ -108,17 +109,21 @@ const CoursesSection = () => {
                   Duration: {course.duration}
                 </span>
               </div>
-              <Button className="mt-auto w-full bg-gold text-chess-dark hover:bg-gold/90 hover-shine">
-                Enroll Now
-              </Button>
+              <Link to={`/courses#course-${course.id}`}>
+                <Button className="mt-auto w-full bg-gold text-chess-dark hover:bg-gold/90 hover-shine">
+                  Enroll Now
+                </Button>
+              </Link>
             </div>
           ))}
         </div>
 
         <div className="text-center mt-12 reveal">
-          <Button variant="outline" className="border-gold/30 text-gold hover:bg-gold/10">
-            View All Courses
-          </Button>
+          <Link to="/courses">
+            <Button variant="outline" className="border-gold/30 text-gold hover:bg-gold/10">
+              View All Courses
+            </Button>
+          </Link>
         </div>
       </Container>
     </section>
