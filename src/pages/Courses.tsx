@@ -1,12 +1,10 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { supabase } from "@/lib/supabase";
-import { toast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -24,44 +22,11 @@ interface Course {
 }
 
 const Courses = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        let query = supabase.from("courses").select("*");
-        
-        if (filter !== "all") {
-          query = query.eq("level", filter);
-        }
-        
-        const { data, error } = await query.order("id");
-        
-        if (error) {
-          throw error;
-        }
-        
-        setCourses(data || []);
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load courses. Please try again later.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, [filter]);
-
-  // Dummy data for initial display before database connection
-  const dummyCourses: Course[] = [
+  // Dummy data for courses
+  const allCourses: Course[] = [
     {
       id: "1",
       title: "Chess Fundamentals Masterclass",
@@ -136,7 +101,9 @@ const Courses = () => {
     }
   ];
 
-  const displayCourses = courses.length > 0 ? courses : dummyCourses;
+  const filteredCourses = filter === "all" 
+    ? allCourses 
+    : allCourses.filter(course => course.level === filter);
 
   const getLevelColor = (level: string) => {
     switch(level) {
@@ -177,113 +144,117 @@ const Courses = () => {
                 <Button
                   onClick={() => setFilter("all")}
                   variant={filter === "all" ? "default" : "outline"}
-                  className={filter === "all" ? "bg-gold text-chess-dark" : "border-white/20"}
+                  className={filter === "all" 
+                    ? "bg-gold text-chess-dark hover:bg-gold/90" 
+                    : "border-white/20 text-white hover:bg-white/10 hover:text-white"
+                  }
                 >
                   All Courses
                 </Button>
                 <Button
                   onClick={() => setFilter("beginner")}
                   variant={filter === "beginner" ? "default" : "outline"}
-                  className={filter === "beginner" ? "bg-green-500 text-chess-dark" : "border-white/20"}
+                  className={filter === "beginner" 
+                    ? "bg-green-500 text-white hover:bg-green-600" 
+                    : "border-white/20 text-white hover:bg-white/10 hover:text-white"
+                  }
                 >
                   Beginner
                 </Button>
                 <Button
                   onClick={() => setFilter("intermediate")}
                   variant={filter === "intermediate" ? "default" : "outline"}
-                  className={filter === "intermediate" ? "bg-blue-500 text-chess-dark" : "border-white/20"}
+                  className={filter === "intermediate" 
+                    ? "bg-blue-500 text-white hover:bg-blue-600" 
+                    : "border-white/20 text-white hover:bg-white/10 hover:text-white"
+                  }
                 >
                   Intermediate
                 </Button>
                 <Button
                   onClick={() => setFilter("advanced")}
                   variant={filter === "advanced" ? "default" : "outline"}
-                  className={filter === "advanced" ? "bg-purple-500 text-chess-dark" : "border-white/20"}
+                  className={filter === "advanced" 
+                    ? "bg-purple-500 text-white hover:bg-purple-600" 
+                    : "border-white/20 text-white hover:bg-white/10 hover:text-white"
+                  }
                 >
                   Advanced
                 </Button>
               </div>
             </div>
             
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="glass-card animate-pulse h-[400px] rounded-xl"></div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {displayCourses.map((course) => (
-                  <Card key={course.id} className="glass-card transition-all duration-300 hover:border-gold/30 hover:bg-white/10 overflow-hidden rounded-xl flex flex-col h-full">
-                    <div className="relative h-48 overflow-hidden rounded-t-xl">
-                      <div 
-                        className="absolute inset-0 bg-gradient-to-t from-chess-darker to-transparent z-10"
-                      ></div>
-                      <div 
-                        className="w-full h-full bg-chess-blue/20"
-                        style={{
-                          backgroundImage: course.thumbnail ? `url(${course.thumbnail})` : 'none',
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center'
-                        }}
-                      ></div>
-                      <Badge className={`absolute top-4 right-4 z-20 ${getLevelColor(course.level)}`}>
-                        {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                      </Badge>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCourses.map((course) => (
+                <Card key={course.id} className="glass-card transition-all duration-300 hover:border-gold/30 hover:bg-white/10 overflow-hidden rounded-xl flex flex-col h-full">
+                  <div className="relative h-48 overflow-hidden rounded-t-xl">
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-t from-chess-darker to-transparent z-10"
+                    ></div>
+                    <div 
+                      className="w-full h-full bg-chess-blue/20"
+                      style={{
+                        backgroundImage: course.thumbnail ? `url(${course.thumbnail})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    ></div>
+                    <Badge className={`absolute top-4 right-4 z-20 ${getLevelColor(course.level)}`}>
+                      {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
+                    </Badge>
+                  </div>
+                  
+                  <div className="p-6 flex-grow flex flex-col">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-bold line-clamp-2">{course.title}</h3>
+                      <div className="flex items-center ml-2 whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gold" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <span className="text-sm font-medium ml-1">{course.rating}</span>
+                      </div>
                     </div>
                     
-                    <div className="p-6 flex-grow flex flex-col">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-xl font-bold line-clamp-2">{course.title}</h3>
-                        <div className="flex items-center ml-2 whitespace-nowrap">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gold" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    <p className="text-sm text-white/70 mb-4 line-clamp-3">
+                      {course.description}
+                    </p>
+                    
+                    <div className="mt-auto">
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="text-sm text-white/70">
+                          <span className="text-white/90 font-medium">{course.author}</span>
+                        </div>
+                        <div className="text-sm text-white/70 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                           </svg>
-                          <span className="text-sm font-medium ml-1">{course.rating}</span>
+                          {course.students_count} students
                         </div>
                       </div>
                       
-                      <p className="text-sm text-white/70 mb-4 line-clamp-3">
-                        {course.description}
-                      </p>
-                      
-                      <div className="mt-auto">
-                        <div className="flex justify-between items-center mb-4">
-                          <div className="text-sm text-white/70">
-                            <span className="text-white/90 font-medium">{course.author}</span>
-                          </div>
-                          <div className="text-sm text-white/70 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                            </svg>
-                            {course.students_count} students
-                          </div>
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center text-white/70 text-sm">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                          </svg>
+                          {course.duration}
                         </div>
-                        
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center text-white/70 text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                            </svg>
-                            {course.duration}
-                          </div>
-                          <div className="text-xl font-bold text-gold">
-                            ${course.price}
-                          </div>
+                        <div className="text-xl font-bold text-gold">
+                          ${course.price}
                         </div>
-                        
-                        <Button 
-                          className="w-full mt-4 bg-gold text-chess-dark hover:bg-gold/90 hover-shine"
-                          onClick={() => navigate(`/courses/${course.id}`)}
-                        >
-                          View Course
-                        </Button>
                       </div>
+                      
+                      <Button 
+                        className="w-full mt-4 bg-gold text-chess-dark hover:bg-gold/90 hover-shine"
+                        onClick={() => navigate(`/courses/${course.id}`)}
+                      >
+                        View Course
+                      </Button>
                     </div>
-                  </Card>
-                ))}
-              </div>
-            )}
+                  </div>
+                </Card>
+              ))}
+            </div>
           </Container>
         </div>
         
