@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -109,7 +108,7 @@ const CoursesSection = () => {
                   Duration: {course.duration}
                 </span>
               </div>
-              <Link to={`/courses#course-${course.id}`}>
+              <Link to="/courses">
                 <Button className="mt-auto w-full bg-gold text-chess-dark hover:bg-gold/90 hover-shine">
                   Enroll Now
                 </Button>

@@ -68,11 +68,11 @@ const Signup = () => {
       <div className="relative z-10">
         <Navbar />
         <Container className="pt-32 pb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="glass-card p-8 rounded-xl">
-              <div className="max-w-md mx-auto">
-                <h1 className="text-3xl font-bold mb-2">Create an Account</h1>
-                <p className="text-muted-foreground mb-8">Join our chess community and start learning today</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-12rem)]">
+            <div className="glass-card p-8 rounded-xl flex items-center justify-center">
+              <div className="w-full max-w-md">
+                <h1 className="text-3xl font-bold mb-2 text-center">Create an Account</h1>
+                <p className="text-muted-foreground mb-8 text-center">Join our chess community and start learning today</p>
                 
                 <form onSubmit={handleSignup} className="space-y-6">
                   <div className="space-y-2">
