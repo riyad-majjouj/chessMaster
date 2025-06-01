@@ -59,16 +59,66 @@ export const setupLighting = (scene: THREE.Scene): void => {
 };
 
 /**
- * Creates an environment map
+ * Creates an environment map with fallback handling
  */
 export const createEnvironmentMap = (): THREE.CubeTexture => {
-  const cubeTextureLoader = new THREE.CubeTextureLoader();
-  return cubeTextureLoader.load([
-    '/assets/envmap/px.png',
-    '/assets/envmap/nx.png',
-    '/assets/envmap/py.png',
-    '/assets/envmap/ny.png',
-    '/assets/envmap/pz.png',
-    '/assets/envmap/nz.png',
-  ]);
+  try {
+    const cubeTextureLoader = new THREE.CubeTextureLoader();
+    
+    // Create a simple procedural environment map as fallback
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const context = canvas.getContext('2d');
+    
+    if (context) {
+      // Create a simple gradient background
+      const gradient = context.createLinearGradient(0, 0, 0, 256);
+      gradient.addColorStop(0, '#1a1a2e');
+      gradient.addColorStop(0.5, '#16213e');
+      gradient.addColorStop(1, '#0f3460');
+      
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 256, 256);
+    }
+    
+    // Create cube texture from canvas
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.mapping = THREE.CubeReflectionMapping;
+    
+    // Create cube texture with simple colors as fallback
+    const cubeTexture = new THREE.CubeTexture();
+    const images = [];
+    
+    for (let i = 0; i < 6; i++) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const context = canvas.getContext('2d');
+      
+      if (context) {
+        const gradient = context.createLinearGradient(0, 0, 256, 256);
+        gradient.addColorStop(0, '#2a2a4a');
+        gradient.addColorStop(1, '#1a1a2e');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 256, 256);
+      }
+      
+      images.push(canvas);
+    }
+    
+    cubeTexture.image = images;
+    cubeTexture.needsUpdate = true;
+    
+    console.log("Environment map created successfully with procedural fallback");
+    return cubeTexture;
+    
+  } catch (error) {
+    console.warn("Failed to create environment map, using minimal fallback", error);
+    
+    // Absolute minimal fallback
+    const cubeTexture = new THREE.CubeTexture();
+    cubeTexture.image = [null, null, null, null, null, null];
+    return cubeTexture;
+  }
 };
