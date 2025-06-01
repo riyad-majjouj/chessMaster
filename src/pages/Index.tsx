@@ -1,20 +1,11 @@
 
-import React, { useEffect, lazy, Suspense } from "react";
+import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-
-// Lazy load components for better performance
-const AboutSection = lazy(() => import("@/components/AboutSection"));
-const CoursesSection = lazy(() => import("@/components/CoursesSection"));
-const MastersSection = lazy(() => import("@/components/MastersSection"));
-const Footer = lazy(() => import("@/components/Footer"));
-
-// Loading fallback for lazy-loaded components
-const SectionLoader = () => (
-  <div className="w-full h-[300px] flex items-center justify-center">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
-  </div>
-);
+import AboutSection from "@/components/AboutSection";
+import CoursesSection from "@/components/CoursesSection";
+import MastersSection from "@/components/MastersSection";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   // Initialize reveal animation on scroll
@@ -53,18 +44,10 @@ const Index = () => {
       <div className="relative z-10">
         <Navbar />
         <HeroSection />
-        <Suspense fallback={<SectionLoader />}>
-          <AboutSection />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <CoursesSection />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <MastersSection />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <Footer />
-        </Suspense>
+        <AboutSection />
+        <CoursesSection />
+        <MastersSection />
+        <Footer />
       </div>
     </div>
   );

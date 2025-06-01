@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import SplineScene from "@/components/SplineScene";
+import ChessScene from "@/components/ChessScene";
 import { Link } from "react-router-dom";
 
 const HeroSection = () => {
@@ -82,7 +82,7 @@ const HeroSection = () => {
             </div>
           </div>
           <div className="h-[500px] w-full mx-auto reveal">
-            <SplineScene />
+            <ChessScene />
           </div>
         </div>
       </Container>
