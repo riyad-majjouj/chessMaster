@@ -123,9 +123,7 @@ const MastersSection = () => {
           <p className="text-white/70 max-w-2xl mx-auto mb-6">
             Join our community of chess enthusiasts and transform your game with personalized guidance from our master instructors.
           </p>
-          <div className="inline-block px-6 py-3 text-chess-dark font-medium bg-gold rounded-lg hover:bg-gold/90 transition-colors cursor-pointer hover-shine">
-            Join Chess Masters Today
-          </div>
+         
         </div>
       </Container>
     </section>

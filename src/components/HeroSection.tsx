@@ -1,13 +1,38 @@
-
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import ChessScene from "@/components/ChessScene";
 import { Link } from "react-router-dom";
+import Modelviewer from "@/components/ModelViewer"; // تأكد من أن المسار صحيح لمكون Modelviewer
 
 const HeroSection = () => {
   const revealRef = useRef<HTMLDivElement>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // تأثير للتحقق من حالة المصادقة والاستماع لتغييراتها في localStorage
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      const token = localStorage.getItem("authToken");
+      setIsAuthenticated(!!token);
+    };
+
+    checkAuthStatus(); // تحقق عند تحميل المكون
+
+    // الاستماع لتغييرات localStorage
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "authToken") {
+        checkAuthStatus();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    // تنظيف المستمع عند إلغاء تحميل المكون
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []); // يتم تشغيل هذا التأثير مرة واحدة عند التحميل
+
+
+  // تأثير التمرير للكشف عن العناصر
   useEffect(() => {
     const handleScroll = () => {
       if (revealRef.current) {
@@ -16,31 +41,41 @@ const HeroSection = () => {
         revealsElements.forEach((element) => {
           const windowHeight = window.innerHeight;
           const elementTop = element.getBoundingClientRect().top;
-          const elementVisible = 150;
+          const elementVisible = 150; // ارتفاع العنصر الذي يجب أن يكون مرئيًا لتفعيله
           
           if (elementTop < windowHeight - elementVisible) {
             element.classList.add("active");
           }
+          // يمكنك إضافة else لإزالة الكلاس إذا خرج العنصر من العرض مرة أخرى
+          // else {
+          //   element.classList.remove("active");
+          // }
         });
       }
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Trigger on initial load
-    
+    handleScroll(); // استدعاء الدالة مرة واحدة عند التحميل للتأكد من ظهور العناصر المرئية بالفعل
+
+    // تنظيف مستمع التمرير
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, []); // يتم تشغيل هذا التأثير مرة واحدة عند التحميل
+
+
+  // تحديد الوجهة لزر "Get Started" بناءً على حالة المصادقة
+  const getStartedLink = isAuthenticated ? "/courses" : "/login";
 
   return (
     <div className="min-h-screen flex items-center py-20 relative overflow-hidden" ref={revealRef}>
       {/* Background gradient effects */}
       <div className="absolute inset-0 bg-chess-darker z-0">
-        <div className="absolute top-[30%] left-1/4 w-[500px] h-[500px] rounded-full bg-gold/10 filter blur-[120px] opacity-50"></div>
-        <div className="absolute top-[10%] right-1/3 w-[300px] h-[300px] rounded-full bg-chess-blue/10 filter blur-[120px] opacity-30"></div>
+        <div className="absolute top-[30%] left-1/4 w-[500px] h-[500px] rounded-full bg-gold/10 filter blur-[120px] opacity-50 animate-float-slow"></div>
+        <div className="absolute top-[10%] right-1/3 w-[300px] h-[300px] rounded-full bg-chess-blue/10 filter blur-[120px] opacity-30 animate-float-slow" style={{ animationDelay: '1s' }}></div>
       </div>
 
       <Container className="relative z-10 pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Text Content Section */}
           <div className="text-center lg:text-left">
             <div className="mb-4 reveal">
               <span className="inline-block px-3 py-1 text-xs font-medium tracking-wider bg-gold/20 text-gold rounded-full mb-2">
@@ -55,13 +90,13 @@ const HeroSection = () => {
               Learn from grandmasters and transform your strategic thinking with our premium online chess courses. Elevate your game to new heights.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start reveal">
-              <Link to="/signup">
-                <Button className="bg-gold text-chess-dark hover:bg-gold/90 hover-shine">
+              <Link to={getStartedLink}>
+                <Button className="bg-gold text-chess-dark hover:bg-gold/90 hover-shine w-full sm:w-auto">
                   Get Started
                 </Button>
               </Link>
               <Link to="/courses">
-                <Button variant="outline" className="border-white/20 hover:bg-white/5">
+                <Button variant="outline" className="border-white/20 hover:bg-white/5 text-white w-full sm:w-auto">
                   Explore Courses
                 </Button>
               </Link>
@@ -81,8 +116,13 @@ const HeroSection = () => {
               </div>
             </div>
           </div>
-          <div className="h-[500px] w-full mx-auto reveal">
-            <ChessScene />
+
+          {/* Model Viewer Section (hidden on small screens) */}
+          <div className="hidden lg:flex h-[500px] w-full reveal items-center justify-center lg:items-end lg:justify-end">
+            {/* تأكد أن Modelviewer يتمدد ليملأ هذا الـ div أو يتم توسيطه بشكل جيد */}
+            <div className="w-full h-full max-w-md lg:max-w-none"> {/* يمكنك التحكم بحجم Modelviewer من هنا */}
+              <Modelviewer />
+            </div>
           </div>
         </div>
       </Container>

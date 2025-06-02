@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { supabase, isUserAuthenticated } from "@/lib/supabase";
+// import { supabase, isUserAuthenticated } from "@/lib/supabase"; // إزالة supabase
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -13,33 +12,56 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // دالة للتحقق من التوكن وتحديث حالة المصادقة
+  const checkAuthStatus = () => {
+    const token = localStorage.getItem("authToken");
+    setIsAuthenticated(!!token); // تحويل القيمة إلى boolean: true إذا كان التوكن موجودًا، false إذا لم يكن
+  };
+
   useEffect(() => {
-    const checkAuth = async () => {
-      const authenticated = await isUserAuthenticated();
-      setIsAuthenticated(authenticated);
+    // التحقق من حالة المصادقة عند تحميل المكون لأول مرة
+    checkAuthStatus();
+
+    // الاستماع لتغييرات localStorage (مثل تسجيل الدخول/الخروج من علامة تبويب أخرى)
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "authToken") {
+        checkAuthStatus();
+      }
     };
+    window.addEventListener("storage", handleStorageChange);
     
-    checkAuth();
-    
+    // تأثير التمرير
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-
     window.addEventListener("scroll", handleScroll);
+
+    // تنظيف المستمعين عند إلغاء تحميل المكون
     return () => {
+      window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, []); // سيتم تشغيل هذا التأثير مرة واحدة عند التحميل وبعد ذلك عند تغيير localStorage
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    setIsAuthenticated(false);
-    navigate("/");
+
+  // يتم تشغيل هذا التأثير أيضًا عندما يتغير المسار (location)
+  // لضمان تحديث الحالة إذا تم الانتقال إلى صفحة تسجيل الدخول/الخروج
+  // وأيضًا إذا تم تحديث التوكن يدويًا في localStorage (أقل شيوعًا)
+  useEffect(() => {
+    checkAuthStatus();
+  }, [location]); // يستمع لتغيرات location
+
+  const handleSignOut = () => {
+    // await supabase.auth.signOut(); // إزالة supabase
+    localStorage.removeItem("authToken"); // إزالة التوكن من localStorage
+    // يمكنك أيضًا إزالة معلومات المستخدم الأخرى إذا كنت تخزنها
+    // localStorage.removeItem("userInfo");
+    setIsAuthenticated(false); // تحديث الحالة
+    navigate("/"); // توجيه المستخدم إلى الصفحة الرئيسية
   };
 
   const isHomePage = location.pathname === "/";
 
-  // Helper function to create home route links
   const createHomeLink = (anchor: string, text: string) => {
     if (isHomePage) {
       return (
@@ -84,26 +106,16 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {createHomeLink("about", "About")}
-            <Link
-              to="/courses"
-              className="text-white/80 hover:text-gold transition-colors duration-200"
-            >
-              Courses
-            </Link>
+             {createHomeLink("courses", "Courses")}
             {createHomeLink("masters", "Masters")}
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <Link
-                  to="/dashboard"
-                  className="text-white/80 hover:text-gold transition-colors duration-200"
-                >
-                  Dashboard
-                </Link>
+                
                 <Button 
                   onClick={handleSignOut}
                   variant="outline"
-                  className="border-white/20 hover:bg-white/10"
+                  className="border-white/20 hover:bg-white/10 text-white" // ضمان لون النص
                 >
                   Sign Out
                 </Button>
@@ -111,7 +123,7 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center space-x-4">
                 <Link to="/login">
-                  <Button variant="outline" className="border-white/20 hover:bg-white/10">
+                  <Button variant="outline" className="border-white/20 hover:bg-white/10 text-white"> {/* ضمان لون النص */}
                     Sign In
                   </Button>
                 </Link>
@@ -129,6 +141,7 @@ const Navbar = () => {
             className="md:hidden text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
+            {/* ... SVG icon ... */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -171,20 +184,14 @@ const Navbar = () => {
               
               {isAuthenticated ? (
                 <>
-                  <Link
-                    to="/dashboard"
-                    className="text-white/80 hover:text-gold transition-colors duration-200 py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
+                 
                   <Button 
                     onClick={() => {
                       handleSignOut();
                       setIsMobileMenuOpen(false);
                     }}
                     variant="outline"
-                    className="border-white/20 hover:bg-white/10"
+                    className="border-white/20 hover:bg-white/10 w-full text-white" // ضمان لون النص
                   >
                     Sign Out
                   </Button>
@@ -197,7 +204,7 @@ const Navbar = () => {
                   >
                     <Button 
                       variant="outline" 
-                      className="border-white/20 hover:bg-white/10 w-full"
+                      className="border-white/20 hover:bg-white/10 w-full text-white" // ضمان لون النص
                     >
                       Sign In
                     </Button>
