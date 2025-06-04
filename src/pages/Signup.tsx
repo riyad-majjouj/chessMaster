@@ -11,7 +11,7 @@ import ChessScene from "@/components/ChessScene";
 import Lottie from 'lottie-react';
 import signAnimation from "../../public/signAnimation.json"; // تأكد من أن المسار صحيح
 // تعريف عنوان URL للواجهة الخلفية - يفضل وضعه في ملف .env في مشروع حقيقي
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://chessmaster-backend-production.up.railway.app/api";
 
 const Signup = () => {
   // تم تغيير fullName إلى username لمطابقة الواجهة الخلفية

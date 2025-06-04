@@ -12,7 +12,7 @@ import Navbar from "@/components/Navbar";
 import ChessScene from "@/components/ChessScene";
 
 // تعريف عنوان URL للواجهة الخلفية - يفضل وضعه في ملف .env في مشروع حقيقي
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://chessmaster-backend-production.up.railway.app/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
