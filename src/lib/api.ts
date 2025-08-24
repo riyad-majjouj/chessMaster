@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // تأكد من أن هذا الرابط يطابق الباك اند الذي يعمل لديك (المنفذ 5000)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://chess-master-backend-one.vercel.app/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
